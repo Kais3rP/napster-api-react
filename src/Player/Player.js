@@ -1,36 +1,14 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Controls from "../Controls/Controls"
 import TrackInfo from "../TrackInfo/TrackInfo"
 import Audio from "../Audio/Audio"
 
-const API_KEY = "MWNjYjY1NGQtMTU1NS00YTM0LWFlZWItYWZkYzdiMTJiZTll";
-const URL = "https://api.napster.com/v2.2/artists/Art.28463069/tracks/top";
 
-export default function Player() {
+export default function Player({tracks}) {
 
-  const [tracks, setTracks] = useState([]);
   const [currentSongIdx, setCurrentSongIdx] = useState(-1);
   const audioRef = useRef();
 
-  //FETCH TRACKS
-  useEffect(() => {
-    fetchNapster();
-
-    async function fetchNapster() {
-      const res = await fetch(URL, {
-        headers: {
-          apikey: API_KEY
-        }
-      });
-      const data = await res.json();
-      setTracks(
-        data.tracks.map(({ albumName: name, previewURL: src }) => ({
-          name,
-          src
-        }))
-      );
-    }
-  }, []);
 
   //HANDLERS
 
@@ -60,10 +38,11 @@ export default function Player() {
   }, []);
 
   //console.log("RERENDERING APP...IS LOADING TRACK?", isLoading, currentSongIdx, prevIdx);
+  console.log(tracks)
   return (
     <div>
       <h4>CURRENT SONG:</h4>
-      <h5>{tracks[currentSongIdx]?.name}</h5>
+      <h5>{tracks && tracks[currentSongIdx]?.name}</h5>
       <Controls
         handleNextSong={handleNextSong}
         handlePrevSong={handlePrevSong}
@@ -83,7 +62,7 @@ export default function Player() {
         ))}
       </div>
       ;
-      <Audio src={tracks[currentSongIdx]?.src} audioRef={audioRef} />
+      <Audio src={tracks && tracks[currentSongIdx]?.src} audioRef={audioRef} />
     </div>
   );
 }
